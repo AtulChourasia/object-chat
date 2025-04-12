@@ -1,16 +1,17 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 import os
 from dotenv import load_dotenv
 import re
 import json
 import random
 import requests
-from datetime import datetime
-from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, session
+import tempfile
+from datetime import datetime, timedelta
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
-from dotenv import load_dotenv
+from flask_session import Session
+from flask_migrate import Migrate
 
 # Import models and forms
 from models import db, User, ChatSession, ChatMessage
