@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: object-chat
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python deploy_prep.py && gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: GCP_PROJECT_ID
+        sync: false
+      - key: GCP_LOCATION
+        value: us-central1
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PRODUCTION
+        value: true
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: object-chat-db
+          property: connectionString
+
+  - type: cron
+    name: db-backup
+    env: python
+    schedule: "0 0 * * *"  # Daily at midnight
+    buildCommand: pip install psycopg2-binary
+    startCommand: python backup_db.py
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: object-chat-db
+          property: connectionString
+
+databases:
+  - name: object-chat-db
+    plan: free
