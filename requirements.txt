@@ -10,5 +10,5 @@ werkzeug==2.3.7
 email-validator==2.1.0
 gunicorn==20.1.0
 psycopg2-binary==2.9.5
-Flask-Session==0.4.0
+# Flask-Session==0.4.0  # Removed as we're using Flask's built-in session
 Flask-Migrate==4.0.0

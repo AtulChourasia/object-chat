@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
-from flask_session import Session
+# from flask_session import Session  # Comment out Flask-Session
 from flask_migrate import Migrate
 
 # Import models and forms
@@ -229,19 +229,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configure sessions for persistent logins
-app.config['SESSION_TYPE'] = 'filesystem'
+# Using Flask's built-in session instead of Flask-Session
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
-app.config['SESSION_FILE_DIR'] = os.getenv('SESSION_FILE_DIR', './flask_session')
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('PRODUCTION', 'False').lower() == 'true'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 # Initialize database
 db.init_app(app)
-
-# Initialize Flask-Migrate
 migrate = Migrate(app, db)
 
-# Handle CSRF protection differently in production
+# Initialize CSRF protection
 csrf = CSRFProtect(app)
 if os.getenv('PRODUCTION', 'False').lower() != 'true':
     # In development, exempt the chat route for testing
@@ -252,8 +249,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Initialize session
-sess = Session(app)
+# Remove Flask-Session initialization
+# sess = Session()
+# sess.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
